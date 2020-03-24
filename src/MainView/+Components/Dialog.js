@@ -37,8 +37,7 @@ export const FormDialog = ({ onSave }) => {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        To subscribe to this website, please enter your email
-                        address here. We will send updates occasionally.
+                        
                     </DialogContentText>
                     <TextField
                         autoFocus

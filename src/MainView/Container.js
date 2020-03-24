@@ -113,6 +113,8 @@ const MyIconButton = styled(IconButton)`
     color: white;
 `;
 
+let prevSelectedRoom = null;
+let api = null;
 export const Container = () => {
     let { space: selectedSpace, room: selectedRoom } = useParams();
     const history = useHistory();
@@ -156,21 +158,27 @@ export const Container = () => {
         setOpen(false);
     };
 
-    let api = null;
-
     useEffect(() => {
-        if (spaceSnapshot && selectedRoom) {
+        if (spaceSnapshot && selectedRoom && rooms) {
+            if(selectedRoom === prevSelectedRoom) {
+                return;
+            }
+            prevSelectedRoom = selectedRoom;
             if (api) {
                 api.dispose();
             }
+
+
             const timer = setTimeout(() => {
+                const videoRootElement = document.querySelector("#video-root");
+
                 const domain = "meet.jit.si";
 
                 const options = {
                     roomName: `${spaceSnapshot && spaceSnapshot.val().name}_${
                         rooms[selectedRoom].name
                     }_${spaceSnapshot && spaceSnapshot.key}`,
-                    parentNode: document.querySelector("#video-root")
+                    parentNode: videoRootElement
                 };
 
                 api = new window.JitsiMeetExternalAPI(domain, options);
@@ -182,7 +190,7 @@ export const Container = () => {
             }, 100);
             return () => clearTimeout(timer);
         }
-    }, [spaceSnapshot]);
+    }, [spaceSnapshot, selectedRoom]);
 
     if (loading) {
         return <p> loading...</p>;
@@ -261,8 +269,9 @@ export const Container = () => {
                                 <ListItem
                                     button
                                     onClick={() => {
+                                        console.log("path", `${location.pathname.split("/")[1]}/${key}`);
                                         history.push(
-                                            `${location.pathname}/${key}`
+                                            `/${location.pathname.split("/")[1]}/${key}`
                                         );
                                     }}
                                 >
